@@ -2,7 +2,7 @@ const Topic = require("./models").Topic;
 
 module.exports = {
   getAllTopics(callback){
-    return Topic.findAll()
+    return Topic.all()
     .then((topics) => {
       callback(null, topics);
     })
@@ -10,7 +10,7 @@ module.exports = {
       callback(err);
     })
   },
-  
+
   getTopic(id, callback){
     return Topic.findById(id)
     .then((topic) => {
