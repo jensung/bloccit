@@ -1,0 +1,2 @@
+The passport strategy for authenticating with Spotify uses the OAuth 2.0 API.The module lets the app use Spotify to verify/authenticate in a Node.js application.
+First passport Spotify has to be installed using npm. The spotify authentication strategy will authenticate users with a spotify account and OAuth 2.0 tokens. The strategy calls for a verify callback that accepts the credentials and calls done providing a user, as well as options specifying a client ID, client secret, and callback URL.
