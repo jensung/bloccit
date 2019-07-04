@@ -19,9 +19,12 @@
     "dotenv": "^5.0.1",
     "ejs": "^2.6.2",
     "express": "^4.17.1",
+    "express-flash": "0.0.2",
+    "express-session": "^1.15.6",
+    "express-validator": "^5.0.2",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.3",
-    "sequelize": "^4.44.0",
+    "sequelize": "^6.0.0",
     "sequelize-cli": "^5.5.0"
   }
 }
