@@ -1,33 +1,44 @@
 const sequelize = require("../../src/db/models/index").sequelize;
 const Topic = require("../../src/db/models").Topic;
 const Post = require("../../src/db/models").Post;
+const User = require("../../src/db/models").User;
 
 describe("Topic", () => {
 
   beforeEach((done) => {
     this.topic;
     this.post;
-    sequelize.sync({force: true}).then((res) => {
-      Topic.create({
-        title: "The History of Man's Best Friend",
-        description: "A brief history of dog's evolution to pets."
+    this.user;
+
+    sequelize.sync({ force: true }).then((res) => {
+
+      User.create({ // Create User Object
+        email: "starman@tesla.com",
+        password: "Trekkie4lyfe"
       })
-      .then((topic) => {
-        this.topic = topic;
-        Post.create({
-          title: "Evolution from wolves",
-          body: "It was originally believed that the first signs of domesticated wolves appeared around 15,000 years ago in the Middle East.",
-          topicId: this.topic.id
+        .then((user) => {
+          this.user = user; //store the user
+
+          Topic.create({ // Create a Topic object.
+            title: "Expeditions to Alpha Centauri",
+            description: "A compilation of reports from recent visits to the star system.",
+            posts: [{
+              title: "My first visit to Proxima Centauri b",
+              body: "I saw some rocks.",
+              userId: this.user.id
+            }]
+          }, {
+              include: {
+                model: Post,
+                as: "posts"
+              }
+            })
+            .then((topic) => {
+              this.topic = topic; //store the topic
+              this.post = topic.posts[0]; //store the post
+              done();
+            })
         })
-        .then((post) => {
-          this.post = post;
-          done();
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        done();
-      });
     });
   });
 
@@ -35,12 +46,12 @@ describe("Topic", () => {
 
     it("should create a topic object with a title and description", (done) => {
       Topic.create({
-        title: "Marshall",
-        description: "Best good boy doggy out there.",
+        title: "The Matrix",
+        description: "One of the best movies of the 20th century",
       })
       .then((topic) => {
-        expect(topic.title).toBe("Mashall");
-        expect(topic.description).toBe("Best good boy doggy out there.");
+        expect(topic.title).toBe("The Matrix");
+        expect(topic.description).toBe("One of the best movies of the 20th century");
         done();
       })
       .catch((err) => {
@@ -51,7 +62,7 @@ describe("Topic", () => {
 
     it("should not create a topic with missing title or description", (done) => {
       Topic.create({
-        title: "Marshall"
+        title: "The Matrix"
       })
       .then((topic) => {
         done();
@@ -67,16 +78,17 @@ describe("Topic", () => {
 
     it("should return an array of posts associated with a given topic", (done) => {
       Post.create({
-        title:"Hydration is the key to a healthy body.",
-        body: "The Harvard Health Letter recommends drinking 30 to 50 ounces of water a day, which is four to six glasses!",
-        topicId: this.topic.id
+        title:"Mankind harnesses the power of the atom",
+        body: "The first atomic bomb was successfully detonated on July 16th, 1945, Trinity Test in New Mexico as part of the Manhatten Project",
+        topicId: this.topic.id,
+        userId: this.user.id
       })
       .then((post) => {
         this.topic.getPosts()
         .then((postArray) => {
           let postCheck = false;
           for (i=0; i < postArray.length; i++) {
-            if (postArray[i].title === "Hydration is the key to a healthy body.") {
+            if (postArray[i].title === "Mankind harnesses the power of the atom") {
               postCheck = true;
               break;
             }

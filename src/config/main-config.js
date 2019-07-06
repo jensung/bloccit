@@ -23,7 +23,7 @@ module.exports = {
     passportConfig.init(app);
 
     app.use((req, res, next) => {
-      res.locals.currentUser = req.User;
+      res.locals.currentUser = req.user;
       next();
     })
 
