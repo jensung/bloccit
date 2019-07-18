@@ -16,6 +16,7 @@ describe("routes : votes", () => {
     this.post;
     this.vote;
 
+
     sequelize.sync({ force: true }).then((res) => {
       User.create({
         email: "starman@tesla.com",
@@ -76,13 +77,13 @@ describe("routes : votes", () => {
         request.get(options,
           (err, res, body) => {
             Vote.findOne({
-                where: {
+              where: {
                 userId: this.user.id,
                 postId: this.post.id
               }
             })
               .then((vote) => {
-                expect(vote).toBeNull();
+                expect(vote.value).toBe(1);
                 done();
               })
               .catch((err) => {
@@ -95,6 +96,7 @@ describe("routes : votes", () => {
 
     });
   });
+
 
   describe("signed in user voting on a post", () => {
 
