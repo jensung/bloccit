@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     topicId: {
-      type:DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     userId: {
@@ -19,8 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {});
 
-  Post.associate = function(models) {
-    // associations can be defined here
+  Post.associate = function (models) {
     Post.belongsTo(models.Topic, {
       foreignKey: "topicId",
       onDelete: "CASCADE"
@@ -43,13 +42,39 @@ module.exports = (sequelize, DataTypes) => {
 
   };
 
-  Post.prototype.getPoints = function(){
+  Post.prototype.getPoints = function () {
 
-    if(this.votes.length === 0) return 0
+    if (!this.votes || this.votes.length === 0) return 0
 
     return this.votes
       .map((v) => { return v.value })
       .reduce((prev, next) => { return prev + next });
+  };
+
+  Post.prototype.hasUpvoteFor = function (userId, callback) {
+    return this.getVotes({
+      where: {
+        userId: userId,
+        postId: this.id,
+        value: 1
+      }
+    })
+      .then((votes) => {
+        votes.length != 0 ? callback(true) : callback(false);
+      });
+  };
+
+  Post.prototype.hasDownvoteFor = function (userId, callback) {
+    return this.getVotes({
+      where: {
+        userId: userId,
+        postId: this.id,
+        value: -1
+      }
+    })
+      .then((votes) => {
+        votes.length != 0 ? callback(true) : callback(false);
+      });
   };
 
   return Post;
